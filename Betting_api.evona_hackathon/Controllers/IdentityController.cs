@@ -26,20 +26,18 @@ namespace evona_hackathon.API.Controllers
         public async Task<IActionResult> Login([FromBody]LoginReq user)
         {
             string res = await authService.Login(user);
-            string jsonRes = JsonSerializer.Serialize(new {username=user.username,password=user.password,token=res,expires=DateTime.Now.AddMinutes(15).ToString()});
             if (user == null)
                 return BadRequest("User is null");
-            if (res == "2")
-                return Unauthorized("Invalid username or password");
 
-            return Ok(jsonRes);
+            return Ok(res);
 
         }
 
         [HttpPost,Route("/Register")]
-        public IActionResult Register([FromBody]RegisterReq user)
+        public async Task<IActionResult> Register([FromBody]RegisterReq user)
         {
-             return Ok(authService.Register(user));
+            string result = await authService.Register(user);
+             return Ok(result);
         }
     }
 }

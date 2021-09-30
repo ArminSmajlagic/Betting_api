@@ -11,6 +11,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace evona_hackathon.Services.Auth
@@ -53,14 +54,47 @@ namespace evona_hackathon.Services.Auth
                    signingCredentials: creds
                  );
                 var token = new JwtSecurityTokenHandler().WriteToken(opts);
-                return token;
+                string jsonRes = JsonSerializer.Serialize(new { username = req.username, password = req.password, token = token, expires = DateTime.Now.AddMinutes(15).ToString() });
+                return jsonRes;
             }
-            return "2";
+            return JsonSerializer.Serialize("Username or password is invalid");
         }
 
         public async Task<string> Register(RegisterReq req)
         {
-            return "Not implemented";
+            RegisterCheckRequest check_obj = new RegisterCheckRequest() { email = req.email, username = req.username, jmbg = req.jmbg };
+            var sql = "INSERT INTO Korisnik (ime_prezime,username,password,email,jmbg,bdate,wallet) VALUES (@ime_prezime,@username,@password,@email,@jmbg,@bdate,"+0.ToString()+")";
+            using(var cn = new SqlConnection(config.GetConnectionString("pg_db")))
+            {
+                string msg="";
+
+                cn.Open();
+                var users = await cn.QueryAsync<Korisnik>("SELECT * FROM Korisnik WHERE username=@username OR email=@email OR jmbg=@jmbg", check_obj);
+
+                
+                if (users.Count() == 0)
+                {
+                    await cn.ExecuteAsync(sql, req);
+                    msg = "User has been added succesfully";
+                }
+                else
+                {
+                    var emails = users.Where(x => x.email == req.email).ToList();
+                    var usernames = users.Where(x => x.username == req.username).ToList();
+                    var jmbgs = users.Where(x=>x.jmbg==req.jmbg).ToList();
+
+                    if (emails.Count() > 0)
+                        msg += "\nUser with the given email already exists!";
+
+                    if (usernames.Count() > 0)
+                        msg += "\nUsername already exits!";
+
+                    if (jmbgs.Count() > 0)
+                        msg += "\nJMBG already exits!";
+                }
+
+                return JsonSerializer.Serialize(msg); ;
+            }
         }
     }
 }

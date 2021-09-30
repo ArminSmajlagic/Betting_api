@@ -16,6 +16,7 @@ namespace Betting_api.DB_Models
         public string hash { get; set; }
         public string salt { get; set; }
         public string jmbg { get; set; }
+        public string bdate { get; set; }
         public double wallet { get; set; }
     }
 }
