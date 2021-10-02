@@ -14,23 +14,23 @@ namespace evona_hackathon.Models.V1_Models
 
         public string team_2 { get; set; }
 
-        public byte[] team_1_img { get; set; }
+        //public byte[] team_1_img { get; set; }
 
-        public byte[] team_2_img { get; set; }
+        //public byte[] team_2_img { get; set; }
 
         public string score { get; set; }
 
-        public string quote { get; set; }
+        //public string quote { get; set; }
         
-        public DateTime currentTime { get; set; }
+        //public DateTime currentTime { get; set; }
 
-        public DateTime startTime{ get; set; }
+        //public DateTime startTime{ get; set; }
 
-        public DateTime endTime{ get; set; }
+        //public DateTime endTime{ get; set; }
 
-        public DateTime leftTime{ get; set; }
+        //public DateTime leftTime{ get; set; }
 
-        public bool finished { get; set; }
+        //public bool finished { get; set; }
 
     }
 }

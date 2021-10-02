@@ -71,7 +71,8 @@ namespace evona_hackathon.Services.Services
 
         public override async Task<int> Insert(GameUpsertRequest req)
         {
-            var sql = "INSERT INTO Igra (team_1,team_2,team_1_img,team_2_img,score,quote,currentTime,startTime) VALUES (@team_1,@team_2,@team_1_img,@team_2_img,@score,@quote,startTime)";
+           // var sql = "INSERT INTO Igra (team_1,team_2,team_1_img,team_2_img,score,quote,currentTime,startTime) VALUES (@team_1,@team_2,@team_1_img,@team_2_img,@score,@quote,startTime)";
+            var sql = "INSERT INTO Igra (team_1,team_2,score) VALUES (@team_1,@team_2,@score)";
             using (var connection = new SqlConnection(config.GetConnectionString("pg_db")))
             {
                 connection.Open();
@@ -80,21 +81,23 @@ namespace evona_hackathon.Services.Services
             }
         }
 
-        public override async Task<List<Game>> GetAll(GameSearchRequest req)
+        public override async Task<List<Game>> GetAll(GameSearchRequest req=null)
         {
             var sql = "SELECT * FROM Igra";
 
             if (req != null)
             {
-                sql += " WHERE";
+                if (req.id != 0)
+
+                    sql += " WHERE";
                 if (!string.IsNullOrEmpty(req.team_1))
                     sql += " team_1 = @team_1";
                 if (!string.IsNullOrEmpty(req.team_2))
                     sql += " AND team_2 = @team_2";
-                if (req.start!=null)
-                    sql += " AND start = @start";
-                if (req.end != null)
-                    sql += " AND end = @end";               
+                //    if (req.start!=null)
+                //        sql += " AND start = @start";
+                //    if (req.end != null)
+                //        sql += " AND end = @end";               
             }
 
             using (var connection = new SqlConnection(config.GetConnectionString("pg_db")))
