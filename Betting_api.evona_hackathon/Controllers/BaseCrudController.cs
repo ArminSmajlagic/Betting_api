@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 namespace evona_hackathon.API.Controllers
 {
     [ApiController]
+    //[BaseResourcesFilter]
+    //[BaseActionFilter]
     public class BaseCrudController<T,Tdb,TSearch,TUpsert>:Controller
     {
         private readonly ICrudRepo<T, Tdb, TSearch, TUpsert> service;

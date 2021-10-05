@@ -3,6 +3,7 @@ using System;
 
 namespace evona_hackathon.Services.Logging
 {
+    //this logger doesnt do anything yet
     public class Logger:ILogger
     {
         public Logger()

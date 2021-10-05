@@ -3,6 +3,7 @@ using evona_hackathon.Data;
 using evona_hackathon.Infrastructure;
 using evona_hackathon.Models.V1_Models;
 using evona_hackathon.Services.Auth;
+using evona_hackathon.Services.Filters;
 using evona_hackathon.Services.IRepos;
 using evona_hackathon.Services.Mapping;
 using evona_hackathon.Services.Services;
@@ -35,11 +36,12 @@ namespace evona_hackathon.API
         }
 
         public IConfiguration Configuration { get; }
+
         readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //cors doesnt work...i dont know why (must use chrome cors blocker plugin for endpoint comsumption)
             services.AddCors(options =>
             {
                 options.AddPolicy(name: MyAllowSpecificOrigins,
@@ -55,12 +57,10 @@ namespace evona_hackathon.API
             services.AddSingleton(Configuration);
           
             //authentication
-            //var key = Configuration.GetValue<string>("Token");
-            //var token = Encoding.ASCII.GetBytes(key);
+            var key = Configuration.GetValue<string>("Token"); //getting toke from app configuration
 
+            var token = Encoding.ASCII.GetBytes(key); //encoding the key with ASCII
 
-            var key = Configuration.GetValue<string>("Token");
-            var token = Encoding.ASCII.GetBytes(key);
             services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -68,20 +68,26 @@ namespace evona_hackathon.API
             }).AddJwtBearer(jwt => {
                 jwt.TokenValidationParameters = new TokenValidationParameters()
                 {
-                    IssuerSigningKey=new SymmetricSecurityKey(token),
-                    ValidateIssuerSigningKey=true,
-                    ValidateIssuer=true,
-                    ValidateAudience=true,
+                    IssuerSigningKey=new SymmetricSecurityKey(token), //using simple symetric key for signing
+                    ValidateIssuerSigningKey=true, //requesting validation of the issuer key
+                    ValidateIssuer=true, //requesting issuer validation
+                    ValidateAudience=true, //requesting audience validation
                     ValidIssuer= "https://localhost:44398/",
-                    ValidAudiences = new List<string> { "https://localhost:44398/", "https://localhost:4200/" } 
+                    ValidAudiences = new List<string> { "https://localhost:44398/", "https://localhost:4200/" }//swagger and angular localhost addresses 
                 };
             });
 
 
-            //default controllers service
-            services.AddControllers();
+            //default controllers adding + filter registering
+            //current filter implementation only supports synchronous execution
+            services.AddControllers(x=> {
+                 x.Filters.Add<ErrorHandelingFilter>();
+                 x.Filters.Add<BaseResourcesFilter>();
+                 x.Filters.Add<BaseActionFilter>();
+              }
+            );
 
-            //swagger
+            //swagger documentation specification
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Betting_api.evona_hackathon", Version = "v1" });
@@ -133,16 +139,16 @@ namespace evona_hackathon.API
 
             //default routing and redirecting options
             app.UseHttpsRedirection();
-
             app.UseRouting();
 
+            //cors doesnt work...i dont know why (must use chrome cors blocker plugin for endpoint comsumption)
             app.UseCors(MyAllowSpecificOrigins);
 
             //auth
             app.UseAuthentication();
             app.UseAuthorization();
 
-            //controller mapper
+            //controller mapping
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
