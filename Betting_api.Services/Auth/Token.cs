@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 
 namespace evona_hackathon.Services.Auth
 {
-    public class AuthRes
+    public class Token
     {
-        public int id { get; set; }
-        public string username { get; set; }
-        public string password { get; set; }
-        public string ime_prezime { get; set; }
         public string token { get; set; }
+        public DateTime expires { get; set; }
+        public Token(string token, DateTime expires)
+        {
+            this.token = token;
+            this.expires = expires;
+        }
     }
 }

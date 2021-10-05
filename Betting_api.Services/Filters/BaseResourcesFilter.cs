@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace evona_hackathon.Services.Filters
 {
+    //here can be added some generic validations
     public class BaseResourcesFilter : Attribute,IResourceFilter
     {
         private readonly ILogger logger;

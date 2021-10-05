@@ -10,5 +10,6 @@ namespace evona_hackathon.Services.Auth
     {
         Task<string> Login(LoginReq req);
         Task<string> Register(RegisterReq req);
+        bool verifyToken(string token);
     }
 }

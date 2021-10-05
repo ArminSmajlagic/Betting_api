@@ -3,6 +3,7 @@ using Dapper;
 using evona_hackathon.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -20,11 +21,15 @@ namespace evona_hackathon.Services.Auth
     {
         //private readonly DB_Context db;
         private readonly IConfiguration config;
+        private readonly ILogger logger;
+        private readonly List<Token> tokens;
 
         //public AuthService(IConfiguration _config, DB_Context db)
-        public AuthRepo(IConfiguration _config)
+        public AuthRepo(IConfiguration _config,ILogger logger)
         {
             config = _config;
+            this.logger = logger;
+            tokens = new List<Token>();
             //this.db = db;
         }
 
@@ -54,9 +59,22 @@ namespace evona_hackathon.Services.Auth
                    signingCredentials: creds
                  );
                 var token = new JwtSecurityTokenHandler().WriteToken(opts);
+
+                //adding token to list of published tokens
+                tokens.Add(new Token(token:token,expires: DateTime.Now.AddMinutes(15)));
+
+                //preparing respons in json
                 string jsonRes = JsonSerializer.Serialize(new { username = req.username, password = req.password, token = token, expires = DateTime.Now.AddMinutes(15).ToString() });
+                
+                //logging the event
+                logger.Log(LogLevel.Information, req.username+" has loged in succesfully, and recived this token: " + token);
+                
                 return jsonRes;
             }
+            //logging the event
+            logger.Log(LogLevel.Error, "Username or password is invalid");
+
+            //preparing respons in json and returning
             return JsonSerializer.Serialize("Username or password is invalid");
         }
 
@@ -92,9 +110,16 @@ namespace evona_hackathon.Services.Auth
                     if (jmbgs.Count() > 0)
                         msg += "\nJMBG already exits!";
                 }
-
+                logger.Log(LogLevel.Error, msg);
                 return JsonSerializer.Serialize(msg); ;
             }
+        }
+
+        public bool verifyToken(string token)
+        {
+            if (tokens.Any(x=>x.token==token && x.expires < DateTime.Now))
+                return true;
+            return false;
         }
     }
 }

@@ -11,8 +11,12 @@ namespace evona_hackathon.Models.V1_Models
     public class UserUpsertRequest
     {
         public string ime_prezime { get; set; }
+        [MinLength(5)]
         public string username { get; set; }
+        [MinLength(6)]
+        [MaxLength(16)]
         public string password { get; set; }
+        [EmailAddress]
         public string email { get; set; }
         [JMBG_validation]
         public string jmbg { get; set; }

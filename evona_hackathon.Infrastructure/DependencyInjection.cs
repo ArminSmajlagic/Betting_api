@@ -18,7 +18,7 @@ namespace evona_hackathon.Infrastructure
             services.AddTransient<ILogger, Logger>();
 
             //auth services
-            services.AddTransient<IAuthRepo, AuthRepo>();
+            services.AddSingleton<IAuthRepo, AuthRepo>();
 
             return services;
         }

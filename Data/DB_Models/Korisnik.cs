@@ -14,7 +14,6 @@ namespace Betting_api.DB_Models
         public string ime_prezime { get; set; }
         [Required]
         [MinLength(4)]
-        [StringLength(10)]
         public string username { get; set; }
         [Required]
         [MinLength(6)]

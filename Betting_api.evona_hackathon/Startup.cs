@@ -78,7 +78,7 @@ namespace evona_hackathon.API
             });
 
 
-            //default controllers adding + filter registering
+            //default controllers adding + filter registering (globaly available to all controllers)
             //current filter implementation only supports synchronous execution
             services.AddControllers(x=> {
                  x.Filters.Add<ErrorHandelingFilter>();

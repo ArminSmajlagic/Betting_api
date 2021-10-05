@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace evona_hackathon.Services.Filters
 {
+    //here can be added data validations
     public class BaseActionFilter:ActionFilterAttribute
     {
         private readonly ILogger logger;
@@ -20,13 +21,13 @@ namespace evona_hackathon.Services.Filters
         //"sandwiched" between resources filter executing and executed methods
         public override void OnActionExecuted(ActionExecutedContext context)
         {
-            logger.Log(LogLevel.Trace,"Base action filter has ben called upon...and it is executed!");
+            logger.Log(LogLevel.Debug,"Base action filter has ben called upon...and it is executed!");
 
         }
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            logger.Log(LogLevel.Trace,"Base action filter has ben called upon...and it is executing!");
+            logger.Log(LogLevel.Debug, "Base action filter has ben called upon...and it is executing!");
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Betting_api.DB_Models;
 using evona_hackathon.Models.V1_Models;
+using evona_hackathon.Services.Filters;
 using evona_hackathon.Services.IRepos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +23,7 @@ namespace evona_hackathon.API.Controllers
         }
 
         //[Authorize]
+        [AuthenticationFilter] //custom authentication filter assigned localy
         [HttpGet]
         public override async Task<List<User>> GetAll(UserSearchRequest obj)
         {
