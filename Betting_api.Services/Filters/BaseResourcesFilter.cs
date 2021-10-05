@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,17 +10,24 @@ namespace evona_hackathon.Services.Filters
 {
     public class BaseResourcesFilter : Attribute,IResourceFilter
     {
+        private readonly ILogger logger;
+
+        public BaseResourcesFilter(ILogger logger)
+        {
+            this.logger = logger;
+        }
         public void OnResourceExecuted(ResourceExecutedContext context)
         {
             //called at the end - after action filter
-            Console.WriteLine("Base resource filter has ben called upon...and it is executed!");
+            logger.Log(LogLevel.Information,"Base resource filter has ben called upon...and it is executed!");
             //Console.WriteLine(context.HttpContext.Request.Path);
         }
 
         public void OnResourceExecuting(ResourceExecutingContext context)
         {
             //called before action filter
-            Console.WriteLine("Base resource filter has ben called upon...and it is executing!");
+            logger.Log(LogLevel.Information, "Base resource filter has ben called upon...and it is executing!");
+            
             //Console.WriteLine(context.HttpContext.Request.Path);
         }
     }

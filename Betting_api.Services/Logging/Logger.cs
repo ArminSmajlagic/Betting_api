@@ -3,9 +3,9 @@ using System;
 
 namespace evona_hackathon.Services.Logging
 {
-    //this logger doesnt do anything yet
     public class Logger:ILogger
     {
+        private readonly string crt = "\n-----------------------------------------------\n";
         public Logger()
         {
 
@@ -21,9 +21,11 @@ namespace evona_hackathon.Services.Logging
             throw new NotImplementedException();
         }
 
+        //Logging the log level and the message passed in to it
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(crt+"Log level: " + logLevel.ToString()+"\nMessage :" + state.ToString()+crt);
         }
+
     }
 }
